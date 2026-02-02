@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
+import OAuthCallbackPage from "./pages/OAuthCallback";
 import DashboardPage from "./pages/Dashboard";
 import AddPetPage from "./pages/AddPet";
 import PetDetailPage from "./pages/PetDetail";
@@ -33,6 +34,7 @@ const App = () => (
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/oauth2/redirect" element={<OAuthCallbackPage />} />
             
             {/* Protected Routes */}
             <Route

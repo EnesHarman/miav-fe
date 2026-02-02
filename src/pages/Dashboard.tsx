@@ -4,13 +4,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { petService } from '@/services/pets';
 import { Layout } from '@/components/Layout';
 import { PetCard } from '@/components/PetCard';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PawPrint, Plus, Cat, Dog } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  
+
   const { data: pets, isLoading } = useQuery({
     queryKey: ['pets'],
     queryFn: petService.getMyPets,
@@ -18,124 +17,74 @@ export default function DashboardPage() {
 
   const greeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return 'Günaydın';
+    if (hour < 18) return 'İyi günler';
+    return 'İyi akşamlar';
   };
+
+  // Sadece kedi ve köpek
+  const petsFiltered = pets?.filter((p) => p.species === 'CAT' || p.species === 'DOG') ?? [];
+  const addCardCount = Math.max(2, 4 - petsFiltered.length);
 
   return (
     <Layout>
       <div className="space-y-8">
-        {/* Welcome Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* Welcome */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">
-              {greeting()}, {user?.firstName || 'Pet Parent'}! 🐾
+            <p className="text-sm font-medium text-[#402E2A]/70">
+              {greeting()}, {user?.firstName || 'Patili aile'} 👋
+            </p>
+            <h1 className="mt-1 text-3xl font-bold tracking-tight text-[#402E2A] sm:text-4xl">
+              Patili ailenle neler var?
             </h1>
-            <p className="text-muted-foreground mt-1">
-              Here's what's happening with your furry friends
+            <p className="mt-2 max-w-lg text-[#402E2A]/75">
+              Evcil dostlarının bilgilerini buradan yönetebilir, yeni arkadaş ekleyebilirsin.
             </p>
           </div>
-          <Button asChild size="lg" className="gap-2">
-            <Link to="/add-pet">
-              <Plus className="h-5 w-5" />
-              Add New Pet
-            </Link>
-          </Button>
+          <Link
+            to="/add-pet"
+            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#E67E66] px-5 py-3 text-base font-medium text-white shadow-md transition hover:bg-[#E67E66]/90 hover:shadow-lg"
+          >
+            <Plus className="h-5 w-5" />
+            Yeni Evcil Hayvan Ekle
+          </Link>
         </div>
 
-        {/* Pet Stats */}
-        {!isLoading && pets && pets.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-card rounded-2xl p-4 border">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent">
-                  <PawPrint className="h-5 w-5 text-accent-foreground" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{pets.length}</p>
-                  <p className="text-sm text-muted-foreground">Total Pets</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-card rounded-2xl p-4 border">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                  <Cat className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">
-                    {pets.filter(p => p.species === 'CAT').length}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Cats</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-card rounded-2xl p-4 border">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/10">
-                  <Dog className="h-5 w-5 text-secondary" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">
-                    {pets.filter(p => p.species === 'DOG').length}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Dogs</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-card rounded-2xl p-4 border">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                  <PawPrint className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">
-                    {pets.filter(p => p.species === 'OTHER').length}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Other</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Evcil dostlar — her zaman dolu: pet kartları + "ekle" kartları */}
+        <section>
+          <h2 className="mb-5 text-xl font-semibold text-[#402E2A]">Evcil dostların</h2>
 
-        {/* Pets List */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Your Pets</h2>
-          
           {isLoading ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-28 rounded-xl" />
-              ))}
-            </div>
-          ) : pets && pets.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              {pets.map((pet) => (
-                <PetCard key={pet.id} pet={pet} />
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-[280px] rounded-2xl" />
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-card rounded-2xl border">
-              <div className="flex justify-center mb-4">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent">
-                  <PawPrint className="h-10 w-10 text-accent-foreground" />
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">No pets yet</h3>
-              <p className="text-muted-foreground mb-6">
-                Start by adding your first furry friend!
-              </p>
-              <Button asChild>
-                <Link to="/add-pet">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Your First Pet
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {petsFiltered.map((pet) => (
+                <PetCard key={pet.id} pet={pet} />
+              ))}
+              {Array.from({ length: addCardCount }).map((_, i) => (
+                <Link
+                  key={`add-${i}`}
+                  to="/add-pet"
+                  className="group flex min-h-[280px] flex-col overflow-hidden rounded-2xl border-2 border-dashed border-[#402E2A]/15 bg-white/60 transition hover:border-[#E67E66]/40 hover:bg-[#FDF8F5]"
+                >
+                  <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#E67E66]/10 transition group-hover:bg-[#E67E66]/20">
+                      <Plus className="h-10 w-10 text-[#E67E66]" />
+                    </div>
+                    <span className="text-center text-sm font-medium text-[#402E2A]/80 group-hover:text-[#E67E66]">
+                      Evcil hayvan ekle
+                    </span>
+                  </div>
                 </Link>
-              </Button>
+              ))}
             </div>
           )}
-        </div>
+        </section>
       </div>
     </Layout>
   );

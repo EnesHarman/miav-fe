@@ -13,6 +13,7 @@ export const authService = {
   },
 
   logout(): void {
+    debugger;
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   },
@@ -22,6 +23,7 @@ export const authService = {
   },
 
   setTokens(tokens: AuthResponse): void {
+    debugger
     localStorage.setItem('accessToken', tokens.accessToken);
     localStorage.setItem('refreshToken', tokens.refreshToken);
   },

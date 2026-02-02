@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<!--
+  BACKEND: Bu sayfayı GET /oauth2/redirect?accessToken=...&refreshToken=... çağrıldığında döndürün.
+  Kullanıcı 8080'de kalmak yerine frontend'e (5173/oauth/callback) yönlendirilir, token'lar query'de kalır.
+  Alternatif: Backend doğrudan 302 ile http://localhost:5173/oauth/callback?accessToken=...&refreshToken=... adresine yönlendirebilir.
+-->
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yönlendiriliyor...</title>
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var frontend = 'http://localhost:5173';
+      var callback = frontend + '/oauth/callback?' + params.toString();
+      window.location.replace(callback);
+    })();
+  </script>
+</head>
+<body>
+  <p>Yönlendiriliyor...</p>
+</body>
+</html>

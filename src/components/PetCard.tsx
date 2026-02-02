@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Cat, Dog, PawPrint, ChevronRight } from 'lucide-react';
 import type { Pet } from '@/types';
@@ -16,52 +14,51 @@ const speciesIcons = {
   OTHER: PawPrint,
 };
 
-const speciesColors = {
-  CAT: 'bg-primary/10 text-primary',
-  DOG: 'bg-secondary/10 text-secondary',
-  OTHER: 'bg-muted text-muted-foreground',
+const speciesLabels: Record<string, string> = {
+  CAT: 'Kedi',
+  DOG: 'Köpek',
+  OTHER: 'Diğer',
 };
 
 export function PetCard({ pet }: PetCardProps) {
-  const Icon = speciesIcons[pet.species];
+  const Icon = speciesIcons[pet.species] ?? PawPrint;
+  const label = speciesLabels[pet.species] ?? 'Diğer';
+  const imageUrl = pet.profilePictureUrl || pet.images?.[0]?.url;
 
   return (
-    <Card className="group overflow-hidden transition-all hover:shadow-lg">
+    <Card className="group overflow-hidden rounded-2xl border border-[#402E2A]/10 bg-white/90 shadow-sm transition hover:shadow-md">
       <CardContent className="p-0">
-        <div className="flex items-center gap-4 p-4">
-          <Avatar className="h-20 w-20 rounded-2xl">
-            <AvatarImage 
-              src={pet.profilePictureUrl || pet.images?.[0]?.url} 
-              alt={pet.name}
-              className="object-cover"
-            />
-            <AvatarFallback className="rounded-2xl bg-accent">
-              <Icon className="h-8 w-8 text-accent-foreground" />
-            </AvatarFallback>
-          </Avatar>
-
-          <div className="flex-1 space-y-1">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-lg text-foreground">{pet.name}</h3>
-              <Badge variant="secondary" className={speciesColors[pet.species]}>
-                <Icon className="mr-1 h-3 w-3" />
-                {pet.species}
-              </Badge>
-            </div>
-            {pet.breed && (
-              <p className="text-sm text-muted-foreground">{pet.breed}</p>
-            )}
-            {pet.currentWeight && (
-              <p className="text-sm text-muted-foreground">{pet.currentWeight} kg</p>
-            )}
+        <Link to={`/pets/${pet.id}`} className="flex flex-col">
+          {/* Üst: büyük fotoğraf alanı */}
+          <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#FDF8F5]">
+            <Avatar className="h-full w-full rounded-none">
+              <AvatarImage
+                src={imageUrl}
+                alt={pet.name}
+                className="object-cover"
+              />
+              <AvatarFallback className="rounded-none bg-[#E67E66]/10 text-[#E67E66]">
+                <Icon className="h-16 w-16" />
+              </AvatarFallback>
+            </Avatar>
+            <span className="absolute right-3 top-3 rounded-lg border border-[#402E2A]/10 bg-white/90 px-2 py-1 text-xs font-medium text-[#402E2A]/80 backdrop-blur-sm">
+              {label}
+            </span>
           </div>
-
-          <Button variant="ghost" size="icon" asChild>
-            <Link to={`/pets/${pet.id}`}>
-              <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </Button>
-        </div>
+          {/* Alt: isim ve kısa bilgi */}
+          <div className="flex items-center justify-between gap-3 p-4">
+            <div className="min-w-0 flex-1">
+              <h3 className="truncate font-semibold text-lg text-[#402E2A]">{pet.name}</h3>
+              <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0 text-sm text-[#402E2A]/70">
+                {pet.breed && <span className="truncate">{pet.breed}</span>}
+                {pet.currentWeight != null && (
+                  <span>{pet.currentWeight} kg</span>
+                )}
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 shrink-0 text-[#402E2A]/40 transition group-hover:translate-x-0.5 group-hover:text-[#E67E66]" />
+          </div>
+        </Link>
       </CardContent>
     </Card>
   );
