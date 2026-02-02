@@ -11,50 +11,50 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Playful Pet Theme - Pastel Blue & Orange */
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    /* Miav Theme - Yumuşak Krem, Miav Turuncusu, Derin Kahve */
+    --background: 30 67% 98%;
+    --foreground: 11 21% 21%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 11 21% 21%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 11 21% 21%;
 
-    /* Primary - Pastel Blue */
-    --primary: 199 89% 48%;
+    /* Primary - Miav Turuncusu (#E67E66) */
+    --primary: 11 72% 65%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Pastel Orange */
+    /* Secondary - warmer tone */
     --secondary: 25 95% 53%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 30 40% 94%;
+    --muted-foreground: 11 21% 45%;
 
-    /* Accent - Light Pastel Blue */
-    --accent: 199 89% 94%;
-    --accent-foreground: 199 89% 38%;
+    /* Accent - light warm */
+    --accent: 11 72% 94%;
+    --accent-foreground: 11 72% 38%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 199 89% 48%;
+    --border: 30 30% 90%;
+    --input: 30 30% 90%;
+    --ring: 11 72% 65%;
 
     --radius: 1rem;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 199 89% 48%;
+    --sidebar-foreground: 11 21% 21%;
+    --sidebar-primary: 11 72% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 199 89% 94%;
-    --sidebar-accent-foreground: 199 89% 38%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 199 89% 48%;
+    --sidebar-accent: 11 72% 94%;
+    --sidebar-accent-foreground: 11 72% 38%;
+    --sidebar-border: 30 30% 90%;
+    --sidebar-ring: 11 72% 65%;
 
-    --chart-1: 199 89% 48%;
+    --chart-1: 11 72% 65%;
     --chart-2: 25 95% 53%;
     --chart-3: 142 71% 45%;
     --chart-4: 280 67% 52%;

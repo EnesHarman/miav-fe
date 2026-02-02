@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Cat, Home, LogOut, User, PawPrint } from 'lucide-react';
+import { Home, LogOut, User, PawPrint } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -33,15 +33,16 @@ export function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#FDF8F5]">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 border-b border-[#402E2A]/10 bg-[#FDF8F5]/95 backdrop-blur-sm">
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-              <Cat className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">Miav</span>
+            <img 
+              src="/logo.png" 
+              alt="Miav Logo" 
+              className="h-10 w-10 object-contain"
+            />
           </Link>
 
           <nav className="flex items-center gap-2">
