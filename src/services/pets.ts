@@ -26,4 +26,8 @@ export const petService = {
     const response = await api.post<PetGrowthRecord>(`/api/pets/${petId}/records`, data);
     return response.data;
   },
+
+  async deletePet(id: number): Promise<void> {
+    await api.delete(`/api/pets/${id}`);
+  },
 };

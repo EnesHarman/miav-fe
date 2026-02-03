@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { petService } from '@/services/pets';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
@@ -8,7 +10,31 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Cat, Dog, PawPrint, Calendar, Scale, FileText, ImageIcon, Info, Activity } from 'lucide-react';
+import {
+  ArrowLeft,
+  Cat,
+  Dog,
+  PawPrint,
+  Calendar,
+  Scale,
+  FileText,
+  ImageIcon,
+  Info,
+  Activity,
+  Trash2,
+  Loader2
+} from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { differenceInYears, differenceInMonths, parseISO, format } from 'date-fns';
 import { AddGrowthRecordDialog } from '@/components/AddGrowthRecordDialog';
 import { PetGrowthCharts } from '@/components/PetGrowthCharts';
@@ -22,12 +48,33 @@ const speciesIcons = {
 export default function PetDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { data: pet, isLoading, error } = useQuery({
     queryKey: ['pet', id],
     queryFn: () => petService.getPetById(Number(id)),
     enabled: !!id,
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => petService.deletePet(Number(id)),
+    onMutate: () => setIsDeleting(true),
+    onSuccess: () => {
+      toast.success("Pet deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ['pets'] });
+      navigate('/');
+    },
+    onError: (error) => {
+      setIsDeleting(false);
+      console.error("Failed to delete pet:", error);
+      toast.error("Failed to delete pet. Please try again.");
+    }
+  });
+
+  const handleDelete = () => {
+    deleteMutation.mutate();
+  };
 
   const calculateAge = (birthDate?: string) => {
     if (!birthDate) return null;
@@ -72,11 +119,37 @@ export default function PetDetailPage() {
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Back Button */}
-        <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
+        {/* Top Navigation Bar */}
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2 -ml-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2">
+                <Trash2 className="h-4 w-4" />
+                Delete Pet
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete <strong>{pet.name}</strong> and remove all associated data, including growth records and photos.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  {isDeleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
 
         {/* Hero Section */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 to-accent">
