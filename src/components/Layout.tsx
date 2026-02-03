@@ -34,7 +34,7 @@ export function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-[#FDF8F5]">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-[#402E2A]/10 bg-[#FDF8F5]/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 border-b border-[#E67E66]/20 bg-[#FCE8E4] shadow-sm shadow-[#402E2A]/5">
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
             <img

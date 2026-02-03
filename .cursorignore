@@ -1,0 +1,56 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+# --- Build Artifacts (Derleme Çıktıları) ---
+**/target/
+**/build/
+**/dist/
+**/out/
+**/.next/
+**/bin/
+**/obj/
+
+# --- Dependencies (Bağımlılıklar) ---
+# AI'nın binlerce kütüphane dosyasını okumasına gerek yok
+**/node_modules/
+**/.gradle/
+**/.mvn/
+**/vendor/
+
+# --- IDE & Tooling (Araçlar) ---
+**/.idea/
+**/.vscode/
+**/.settings/
+**/.project/
+**/.classpath/
+**/.cursor/
+**/.history/
+
+# --- Logs & Temp (Günlükler ve Geçici Dosyalar) ---
+**/logs/
+**/*.log
+**/tmp/
+**/temp/
+**/.vercel/
+
+# --- Environment & Secrets (Güvenlik) ---
+# Hem güvenlik hem de indeks yükü için
+**/.env*
+**/*.pem
+**/*.key
+**/secrets/
+
+# --- OS Specific (İşletim Sistemi) ---
+# Yeni Mac canavarın için :)
+.DS_Store
+Thumbs.db
+
+# --- Media & Binaries (Medya ve İkili Dosyalar) ---
+# Logo ve görselleri indekslemesine gerek yok
+**/*.jpg
+**/*.jpeg
+**/*.png
+**/*.gif
+**/*.svg
+**/*.ico
+**/*.pdf
+**/*.zip
+**/*.tar.gz

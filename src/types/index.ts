@@ -80,14 +80,26 @@ export interface AuthResponse {
 // Growth Record
 export interface PetGrowthRecord {
   id: number;
-  petId: number;
+  date: string;
   weight: number;
-  recordDate: string;
+  petImage?: {
+    id: number;
+    url: string;
+    createdDate: string;
+    description?: string;
+    profile: boolean;
+  };
   notes?: string;
+  moodScore?: number;
+  appetiteScore?: number;
+  aiAnalyzed?: boolean;
 }
 
 export interface CreateGrowthRecordRequest {
+  date: string;
   weight: number;
-  recordDate: string;
+  photoUrl?: string;
   notes?: string;
+  moodScore?: number;
+  appetiteScore?: number;
 }

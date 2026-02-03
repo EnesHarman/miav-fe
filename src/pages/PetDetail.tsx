@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft, Cat, Dog, PawPrint, Calendar, Scale, FileText, ImageIcon, Info } from 'lucide-react';
 import { differenceInYears, differenceInMonths, parseISO, format } from 'date-fns';
+import { AddGrowthRecordDialog } from '@/components/AddGrowthRecordDialog';
 
 const speciesIcons = {
   CAT: Cat,
@@ -32,7 +33,7 @@ export default function PetDetailPage() {
     const birth = parseISO(birthDate);
     const years = differenceInYears(new Date(), birth);
     const months = differenceInMonths(new Date(), birth) % 12;
-    
+
     if (years > 0) {
       return `${years} year${years > 1 ? 's' : ''}${months > 0 ? `, ${months} month${months > 1 ? 's' : ''}` : ''}`;
     }
@@ -90,7 +91,7 @@ export default function PetDetailPage() {
               </AvatarFallback>
             </Avatar>
 
-            <div className="text-center md:text-left space-y-3">
+            <div className="text-center md:text-left space-y-3 flex-1">
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                 <h1 className="text-4xl font-bold text-foreground">{pet.name}</h1>
                 <Badge variant="secondary" className="text-sm">
@@ -125,6 +126,10 @@ export default function PetDetailPage() {
                   </span>
                 )}
               </div>
+            </div>
+
+            <div className="flex-shrink-0">
+              <AddGrowthRecordDialog petId={pet.id} />
             </div>
           </div>
         </div>
