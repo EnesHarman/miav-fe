@@ -8,9 +8,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Cat, Dog, PawPrint, Calendar, Scale, FileText, ImageIcon, Info } from 'lucide-react';
+import { ArrowLeft, Cat, Dog, PawPrint, Calendar, Scale, FileText, ImageIcon, Info, Activity } from 'lucide-react';
 import { differenceInYears, differenceInMonths, parseISO, format } from 'date-fns';
 import { AddGrowthRecordDialog } from '@/components/AddGrowthRecordDialog';
+import { PetGrowthCharts } from '@/components/PetGrowthCharts';
 
 const speciesIcons = {
   CAT: Cat,
@@ -136,10 +137,14 @@ export default function PetDetailPage() {
 
         {/* Tabs */}
         <Tabs defaultValue="info" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
             <TabsTrigger value="info" className="gap-2">
               <Info className="h-4 w-4" />
               Information
+            </TabsTrigger>
+            <TabsTrigger value="health" className="gap-2">
+              <Activity className="h-4 w-4" />
+              Health & Growth
             </TabsTrigger>
             <TabsTrigger value="gallery" className="gap-2">
               <ImageIcon className="h-4 w-4" />
@@ -220,6 +225,10 @@ export default function PetDetailPage() {
                 </Card>
               )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="health" className="space-y-4">
+            <PetGrowthCharts petId={Number(pet.id)} />
           </TabsContent>
 
           <TabsContent value="gallery">
