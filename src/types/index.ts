@@ -103,3 +103,30 @@ export interface CreateGrowthRecordRequest {
   moodScore?: number;
   appetiteScore?: number;
 }
+
+// Consultation
+export interface CreateConsultationRequest {
+  userMessage: string;
+  imageUrls?: string[];
+}
+
+export interface ConsultationResponse {
+  id: number;
+  userMessage: string;
+  aiResponse: string;
+  urgencyLevel: string;
+  confidenceScore: number;
+  imageUrls: string[];
+  createdAt: string;
+}
+
+export interface ConsultationSummaryResponse {
+  id: number;
+  userMessage: string;
+  aiResponsePreview: string;
+  aiResponse?: string;
+  urgencyLevel: string;
+  confidenceScore: number;
+  imageCount: number;
+  createdAt: string;
+}

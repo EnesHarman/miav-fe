@@ -38,6 +38,7 @@ import {
 import { differenceInYears, differenceInMonths, parseISO, format } from 'date-fns';
 import { AddGrowthRecordDialog } from '@/components/AddGrowthRecordDialog';
 import { PetGrowthCharts } from '@/components/PetGrowthCharts';
+import { ChatInterface } from '@/components/ChatInterface';
 
 const speciesIcons = {
   CAT: Cat,
@@ -126,29 +127,37 @@ export default function PetDetailPage() {
             Back
           </Button>
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2">
-                <Trash2 className="h-4 w-4" />
-                Delete Pet
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete <strong>{pet.name}</strong> and remove all associated data, including growth records and photos.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  {isDeleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <div className="flex items-center gap-2">
+            <ChatInterface
+              petId={Number(pet.id)}
+              petName={pet.name}
+              petImage={pet.profilePictureUrl || pet.images?.[0]?.url}
+            />
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2">
+                  <Trash2 className="h-4 w-4" />
+                  Delete Pet
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete <strong>{pet.name}</strong> and remove all associated data, including growth records and photos.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    {isDeleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
 
         {/* Hero Section */}
