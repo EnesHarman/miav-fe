@@ -22,7 +22,8 @@ import {
   Info,
   Activity,
   Trash2,
-  Loader2
+  Loader2,
+  Syringe
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -39,6 +40,7 @@ import { differenceInYears, differenceInMonths, parseISO, format } from 'date-fn
 import { AddGrowthRecordDialog } from '@/components/AddGrowthRecordDialog';
 import { PetGrowthCharts } from '@/components/PetGrowthCharts';
 import { ChatInterface } from '@/components/ChatInterface';
+import { VaccineList } from '@/components/VaccineList';
 
 const speciesIcons = {
   CAT: Cat,
@@ -219,7 +221,7 @@ export default function PetDetailPage() {
 
         {/* Tabs */}
         <Tabs defaultValue="info" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
             <TabsTrigger value="info" className="gap-2">
               <Info className="h-4 w-4" />
               Information
@@ -227,6 +229,10 @@ export default function PetDetailPage() {
             <TabsTrigger value="health" className="gap-2">
               <Activity className="h-4 w-4" />
               Health & Growth
+            </TabsTrigger>
+            <TabsTrigger value="vaccines" className="gap-2">
+              <Syringe className="h-4 w-4" />
+              Vaccines
             </TabsTrigger>
             <TabsTrigger value="gallery" className="gap-2">
               <ImageIcon className="h-4 w-4" />
@@ -311,6 +317,10 @@ export default function PetDetailPage() {
 
           <TabsContent value="health" className="space-y-4">
             <PetGrowthCharts petId={Number(pet.id)} />
+          </TabsContent>
+
+          <TabsContent value="vaccines" className="space-y-4">
+            <VaccineList petId={Number(pet.id)} petSpecies={pet.species} />
           </TabsContent>
 
           <TabsContent value="gallery">

@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, User, Camera, Save, Star } from 'lucide-react';
@@ -20,8 +21,10 @@ import { toast } from 'sonner';
 const profileSchema = z.object({
   firstName: z.string().max(50).optional(),
   lastName: z.string().max(50).optional(),
+  phoneNumber: z.string().max(20).optional(),
   bio: z.string().max(500).optional(),
   city: z.string().max(100).optional(),
+  language: z.enum(['TR', 'EN', 'DE', 'ES', 'FR']).optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -35,8 +38,10 @@ export default function ProfilePage() {
     defaultValues: {
       firstName: user?.firstName || '',
       lastName: user?.lastName || '',
+      phoneNumber: user?.phoneNumber || '',
       bio: user?.bio || '',
       city: user?.city || '',
+      language: user?.language || 'EN',
     },
   });
 
@@ -189,6 +194,20 @@ export default function ProfilePage() {
 
                 <FormField
                   control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="+90 555 123 4567" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="city"
                   render={({ field }) => (
                     <FormItem>
@@ -196,6 +215,31 @@ export default function ProfilePage() {
                       <FormControl>
                         <Input placeholder="Istanbul" {...field} />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="language"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Preferred Language</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a language" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="EN">🇬🇧 English</SelectItem>
+                          <SelectItem value="TR">🇹🇷 Türkçe</SelectItem>
+                          <SelectItem value="DE">🇩🇪 Deutsch</SelectItem>
+                          <SelectItem value="ES">🇪🇸 Español</SelectItem>
+                          <SelectItem value="FR">🇫🇷 Français</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

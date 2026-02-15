@@ -1,6 +1,17 @@
 // Enums
 export type Species = 'CAT' | 'DOG' | 'OTHER';
 export type Gender = 'MALE' | 'FEMALE';
+export type Language = 'TR' | 'EN' | 'DE' | 'ES' | 'FR';
+export type VaccineType =
+  | 'CANINE_PARASITE'
+  | 'CANINE_RABIES'
+  | 'CANINE_MIXED'
+  | 'CANINE_BORDETELLA'
+  | 'FELINE_PARASITE'
+  | 'FELINE_RABIES'
+  | 'FELINE_MIXED'
+  | 'FELINE_LEUKEMIA';
+export type ReactionSeverity = 'NONE' | 'MILD' | 'SEVERE';
 
 // User Profile
 export interface UserProfile {
@@ -10,7 +21,9 @@ export interface UserProfile {
   lastName?: string;
   avatarUrl?: string;
   bio?: string;
+  phoneNumber?: string;
   city?: string;
+  language?: Language;
   isExpert: boolean;
 }
 
@@ -18,7 +31,9 @@ export interface UpdateProfileRequest {
   firstName?: string;
   lastName?: string;
   bio?: string;
+  phoneNumber?: string;
   city?: string;
+  language?: Language;
   avatarUrl?: string;
 }
 
@@ -129,4 +144,41 @@ export interface ConsultationSummaryResponse {
   confidenceScore: number;
   imageCount: number;
   createdAt: string;
+}
+
+// Vaccine
+export interface VaccineHistoryItem {
+  id: number;
+  administeredDate: string;
+  vetClinicName?: string;
+  reactionSeverity?: ReactionSeverity;
+  reactionNotes?: string;
+}
+
+export interface VaccineGroupResponse {
+  vaccineType: VaccineType;
+  nextVaccineDate?: string;
+  vaccineHistory: VaccineHistoryItem[];
+}
+
+export interface GroupedVaccinesResponse {
+  vaccineGroups: VaccineGroupResponse[];
+}
+
+export interface VaccineResponse {
+  id: number;
+  vaccineType: VaccineType;
+  administeredDate: string;
+  nextDueDate?: string;
+  vetClinicName?: string;
+  reactionSeverity?: ReactionSeverity;
+  reactionNotes?: string;
+}
+
+export interface CreateVaccineRequest {
+  vaccineType: VaccineType;
+  administeredDate: string;
+  vetClinicName?: string;
+  reactionSeverity?: ReactionSeverity;
+  reactionNotes?: string;
 }
