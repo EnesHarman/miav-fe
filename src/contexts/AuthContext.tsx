@@ -24,11 +24,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (authService.isAuthenticated()) {
         const userData = await userService.getCurrentUser();
         setUser(userData);
+        if (userData.language) {
+          localStorage.setItem('userLanguage', userData.language);
+        }
       }
     } catch (error) {
       console.error('Failed to fetch user:', error);
       authService.logout();
       setUser(null);
+      localStorage.removeItem('userLanguage');
     } finally {
       setIsLoading(false);
     }
@@ -53,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     authService.logout();
     setUser(null);
+    localStorage.removeItem('userLanguage');
   };
 
   const refreshUser = async () => {

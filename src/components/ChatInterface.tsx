@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { consultationService } from '@/services/consultations';
+import { storageService } from '@/services/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -12,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Send, Bot, User, MessageSquareText } from 'lucide-react';
+import { Loader2, Send, Bot, User, MessageSquareText, Paperclip, X, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { ConsultationSummaryResponse } from '@/types';
 import { toast } from 'sonner';
@@ -28,6 +29,9 @@ interface ChatInterfaceProps {
 export function ChatInterface({ petId, petName, petImage }: ChatInterfaceProps) {
     const [message, setMessage] = useState('');
     const [isOpen, setIsOpen] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const isFirstRender = useRef(true);
     const queryClient = useQueryClient();
@@ -39,10 +43,11 @@ export function ChatInterface({ petId, petName, petImage }: ChatInterfaceProps) 
     });
 
     const mutation = useMutation({
-        mutationFn: (userMessage: string) =>
-            consultationService.createConsultation(petId, { userMessage, imageUrls: [] }),
+        mutationFn: (data: { userMessage: string; imageUrls: string[] }) =>
+            consultationService.createConsultation(petId, data),
         onSuccess: (data) => {
             setMessage('');
+            setSelectedFiles([]);
             queryClient.setQueryData<ConsultationSummaryResponse[]>(['consultations', petId], (old) => {
                 const newSummary: ConsultationSummaryResponse = {
                     id: data.id,
@@ -64,6 +69,16 @@ export function ChatInterface({ petId, petName, petImage }: ChatInterfaceProps) 
         }
     });
 
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setSelectedFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+        }
+    };
+
+    const handleRemoveFile = (index: number) => {
+        setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    };
+
     useEffect(() => {
         if (isOpen && scrollRef.current) {
             const isInitial = isFirstRender.current;
@@ -83,10 +98,26 @@ export function ChatInterface({ petId, petName, petImage }: ChatInterfaceProps) 
         };
     }, [isOpen, consultations, mutation.isPending]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!message.trim()) return;
-        mutation.mutate(message);
+        if (!message.trim() && selectedFiles.length === 0) return;
+
+        let uploadedUrls: string[] = [];
+
+        if (selectedFiles.length > 0) {
+            setIsUploading(true);
+            try {
+                uploadedUrls = await storageService.uploadMultipleFiles(selectedFiles);
+            } catch (error) {
+                console.error('Failed to upload images:', error);
+                toast.error('Failed to upload images. Please try again.');
+                setIsUploading(false);
+                return;
+            }
+            setIsUploading(false);
+        }
+
+        mutation.mutate({ userMessage: message, imageUrls: uploadedUrls });
     };
 
     // Sort consultations by date (oldest first)
@@ -190,6 +221,7 @@ export function ChatInterface({ petId, petName, petImage }: ChatInterfaceProps) 
                             {mutation.isPending && (
                                 <div className="space-y-6">
                                     {/* Creating outgoing User Message temporarily */}
+                                    {/* Creating outgoing User Message temporarily */}
                                     <div className="flex flex-row-reverse gap-4 items-start">
                                         <Avatar className="h-10 w-10 border-2 border-background shadow-sm shrink-0 mt-1">
                                             {petImage ? (
@@ -201,6 +233,20 @@ export function ChatInterface({ petId, petName, petImage }: ChatInterfaceProps) 
                                         <div className="space-y-1 max-w-[75%]">
                                             <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-none px-6 py-4 shadow-md opacity-70">
                                                 <p className="text-base leading-relaxed whitespace-pre-wrap">{message}</p>
+                                                {/* Show temp images if any */}
+                                                {selectedFiles.length > 0 && (
+                                                    <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
+                                                        {selectedFiles.map((file, i) => (
+                                                            <div key={i} className="relative w-16 h-16 shrink-0 rounded-md overflow-hidden bg-black/20">
+                                                                <img
+                                                                    src={URL.createObjectURL(file)}
+                                                                    alt="upload"
+                                                                    className="w-full h-full object-cover opacity-80"
+                                                                />
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </div>
                                             <span className="text-xs text-muted-foreground block text-right pr-1">Sending...</span>
                                         </div>
@@ -230,17 +276,68 @@ export function ChatInterface({ petId, petName, petImage }: ChatInterfaceProps) 
                 </div>
 
                 <div className="p-6 border-t bg-background mt-auto">
-                    <form onSubmit={handleSubmit} className="flex gap-4 max-w-3xl mx-auto w-full">
+                    {/* Image Preview Area */}
+                    {selectedFiles.length > 0 && (
+                        <div className="flex gap-3 mb-4 overflow-x-auto py-2 px-1">
+                            {selectedFiles.map((file, index) => (
+                                <div key={index} className="relative group shrink-0">
+                                    <div className="w-20 h-20 rounded-lg overflow-hidden border bg-muted">
+                                        <img
+                                            src={URL.createObjectURL(file)}
+                                            alt={`preview ${index}`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={() => handleRemoveFile(index)}
+                                        className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                                        type="button"
+                                    >
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="flex gap-4 max-w-3xl mx-auto w-full items-end">
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileSelect}
+                            className="hidden"
+                            multiple
+                            accept="image/*"
+                        />
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-12 w-12 shrink-0 rounded-xl"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={isUploading || mutation.isPending}
+                        >
+                            <Paperclip className="h-5 w-5 text-muted-foreground" />
+                        </Button>
                         <Input
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             placeholder="Ask about diet, symptoms, behavior..."
-                            disabled={mutation.isPending}
-                            className="flex-1 h-12 text-base"
+                            disabled={mutation.isPending || isUploading}
+                            className="flex-1 h-12 text-base rounded-xl"
                             autoFocus
                         />
-                        <Button type="submit" size="lg" className="h-12 w-12 p-0 shrink-0" disabled={mutation.isPending || !message.trim()}>
-                            <Send className="h-5 w-5" />
+                        <Button
+                            type="submit"
+                            size="lg"
+                            className="h-12 w-12 p-0 shrink-0 rounded-xl"
+                            disabled={mutation.isPending || isUploading || (!message.trim() && selectedFiles.length === 0)}
+                        >
+                            {isUploading ? (
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : (
+                                <Send className="h-5 w-5" />
+                            )}
                         </Button>
                     </form>
                 </div>

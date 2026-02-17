@@ -17,6 +17,16 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Add Accept-Language header
+    const language = localStorage.getItem('userLanguage');
+    if (language) {
+      config.headers['Accept-Language'] = language;
+    } else {
+      // Optional: Set a default if needed, or let browser/default behavior take over
+      // config.headers['Accept-Language'] = 'EN'; 
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
