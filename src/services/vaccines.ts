@@ -1,5 +1,5 @@
 import api from './api';
-import type { VaccineResponse, CreateVaccineRequest, GroupedVaccinesResponse } from '@/types';
+import type { VaccineResponse, CreateVaccineRequest, GroupedVaccinesResponse, BulkVaccineRequest } from '@/types';
 
 export const vaccineService = {
     async getVaccines(petId: number): Promise<GroupedVaccinesResponse> {
@@ -12,7 +12,12 @@ export const vaccineService = {
         return response.data;
     },
 
-    async deleteVaccine(petId: number, vaccineId: number): Promise<void> {
-        await api.delete(`/api/pets/${petId}/vaccines/${vaccineId}`);
+    async deleteVaccine(vaccineId: number): Promise<void> {
+        await api.delete(`/api/vaccines/${vaccineId}`);
+    },
+
+    async addBulkVaccine(data: BulkVaccineRequest): Promise<VaccineResponse[]> {
+        const response = await api.post<VaccineResponse[]>('/api/vaccines/bulk', data);
+        return response.data;
     },
 };

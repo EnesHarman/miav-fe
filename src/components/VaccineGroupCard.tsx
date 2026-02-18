@@ -116,7 +116,7 @@ function VaccineHistoryRow({ item, petId, isLatest = false }: { item: VaccineHis
     const queryClient = useQueryClient();
 
     const deleteMutation = useMutation({
-        mutationFn: () => vaccineService.deleteVaccine(petId, item.id),
+        mutationFn: () => vaccineService.deleteVaccine(item.id),
         onMutate: () => setIsDeleting(true),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['vaccines', petId] });

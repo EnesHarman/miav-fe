@@ -183,6 +183,13 @@ export interface CreateVaccineRequest {
   reactionNotes?: string;
 }
 
+export interface BulkVaccineRequest {
+  petIds: number[];
+  vaccineType: VaccineType;
+  administeredDate: string;
+  vetClinicName?: string;
+}
+
 // API Response
 export interface ApiResponse {
   success: boolean;
