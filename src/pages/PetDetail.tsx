@@ -41,6 +41,7 @@ import { AddGrowthRecordDialog } from '@/components/AddGrowthRecordDialog';
 import { PetGrowthCharts } from '@/components/PetGrowthCharts';
 import { ChatInterface } from '@/components/ChatInterface';
 import { VaccineList } from '@/components/VaccineList';
+import { PetGallery } from '@/components/PetGallery';
 
 const speciesIcons = {
   CAT: Cat,
@@ -324,41 +325,7 @@ export default function PetDetailPage() {
           </TabsContent>
 
           <TabsContent value="gallery">
-            {pet.images && pet.images.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {pet.images.map((image) => (
-                  <div
-                    key={image.id}
-                    className="relative aspect-square rounded-xl overflow-hidden bg-muted group"
-                  >
-                    <img
-                      src={image.url}
-                      alt={image.description || `${pet.name} photo`}
-                      className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                    />
-                    {image.isProfile && (
-                      <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                        Profile
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="py-16 text-center">
-                  <div className="flex justify-center mb-4">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                      <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                  </div>
-                  <h3 className="font-semibold mb-1">No photos yet</h3>
-                  <p className="text-sm text-muted-foreground">
-                    This pet doesn't have any photos in the gallery
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+            <PetGallery petId={pet.id} images={pet.images || []} />
           </TabsContent>
         </Tabs>
       </div>

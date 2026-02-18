@@ -41,7 +41,7 @@ export interface UpdateProfileRequest {
 export interface PetImage {
   id: number;
   url: string;
-  isProfile: boolean;
+  profile: boolean;
   createdDate: string;
   description?: string;
 }
@@ -181,4 +181,10 @@ export interface CreateVaccineRequest {
   vetClinicName?: string;
   reactionSeverity?: ReactionSeverity;
   reactionNotes?: string;
+}
+
+// API Response
+export interface ApiResponse {
+  success: boolean;
+  message: string;
 }
