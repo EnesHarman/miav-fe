@@ -11,28 +11,43 @@ export default function OAuthCallbackPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    debugger;
-    const params = new URLSearchParams(window.location.search);
-    const accessToken =
-      params.get('accessToken') ?? params.get('access_token');
-    const refreshToken =
-      params.get('refreshToken') ?? params.get('refresh_token');
-      console.log("aaaaa" + params.toString())
-    if (!accessToken || !refreshToken) {
-      setError('Giriş tamamlanamadı. Token bilgisi alınamadı.');
-      toast.error('Google ile giriş tamamlanamadı.');
-      return;
-    }
+    const processCallback = async () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const verifier = sessionStorage.getItem('pkce_verifier');
+        debugger
+        if (!code || !verifier) {
+          setError('Giriş tamamlanamadı. Eksik parametreler.');
+          toast.error('Giriş tamamlanamadı.');
+          return;
+        }
 
-    authService.setTokens({ accessToken, refreshToken, tokenType: 'Bearer' });
-    toast.success('Giriş başarılı!');
+        const tokens = await authService.handleCallback(code, verifier);
+        sessionStorage.removeItem('pkce_verifier');
+        sessionStorage.removeItem('oauth_state');
 
-    if (window.opener) {
-      window.opener.location.href = '/';
-      setTimeout(() => window.close(), 100);
-    } else {
-      window.location.href = '/';
-    }
+        if (window.opener) {
+          window.opener.postMessage({ type: 'OAUTH_SUCCESS', payload: tokens }, window.location.origin);
+          setTimeout(() => window.close(), 100);
+        } else {
+          authService.setTokens(tokens);
+          toast.success('Giriş başarılı!');
+          window.location.href = '/';
+        }
+      } catch (err) {
+        console.error('Callback error:', err);
+        setError('Giriş tamamlanamadı. Sunucu hatası.');
+        toast.error('Giriş işlemi başarısız.');
+
+        if (window.opener) {
+          window.opener.postMessage({ type: 'OAUTH_ERROR' }, window.location.origin);
+          setTimeout(() => window.close(), 100);
+        }
+      }
+    };
+
+    processCallback();
   }, []);
 
   if (error) {

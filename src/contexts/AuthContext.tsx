@@ -1,15 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService } from '@/services/auth';
 import { userService } from '@/services/users';
-import type { UserProfile, LoginRequest, RegisterRequest, AuthResponse } from '@/types';
+import type { UserProfile, AuthResponse } from '@/types';
 
 interface AuthContextType {
   user: UserProfile | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (data: LoginRequest) => Promise<void>;
-  register: (data: RegisterRequest) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
 
@@ -42,20 +40,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fetchUser();
   }, []);
 
-  const login = async (data: LoginRequest) => {
-    const response: AuthResponse = await authService.login(data);
-    authService.setTokens(response);
-    await fetchUser();
-  };
 
-  const register = async (data: RegisterRequest) => {
-    const response: AuthResponse = await authService.register(data);
-    authService.setTokens(response);
-    await fetchUser();
-  };
-
-  const logout = () => {
-    authService.logout();
+  const logout = async () => {
+    await authService.logout();
     setUser(null);
     localStorage.removeItem('userLanguage');
   };
@@ -70,8 +57,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isAuthenticated: !!user,
         isLoading,
-        login,
-        register,
         logout,
         refreshUser,
       }}

@@ -34,8 +34,8 @@ const App = () => (
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/oauth2/redirect" element={<OAuthCallbackPage />} />
-            
+            <Route path="/auth/callback" element={<OAuthCallbackPage />} />
+
             {/* Protected Routes */}
             <Route
               path="/"
@@ -69,7 +69,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            
+
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />
           </Routes>
